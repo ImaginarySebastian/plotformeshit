@@ -7,17 +7,19 @@ namespace PlayerController
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] LayerMask groundLayer;
-        [SerializeField] private ChangeableStats _stats;
-        private Rigidbody2D _rb;
+        [SerializeField] ChangeableStats _stats;
+        [SerializeField] private Rigidbody2D _rb;
         private BoxCollider2D _col;
         private Vector2 _movementVelocity;
         private float horizontalMovement;
-        private float distToGround;
         private bool pressedJump;
         private float horizontal;
 
+        [SerializeField] ContactFilter2D groundFilter;
+        [SerializeField] private bool isGrounded = false;
+
+
         private bool _cahcedQueryStartInColliders;
-        public event Action<bool, float> GroundedChange;
         public event Action Jumped;
 
         private float _time;
@@ -26,15 +28,15 @@ namespace PlayerController
 
         private void Awake()
         {
-            _rb = GetComponent<Rigidbody2D>();
+        //    _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<BoxCollider2D>();
             _cahcedQueryStartInColliders = Physics2D.queriesStartInColliders;
-            distToGround = _col.bounds.extents.y;
         }
 
         private void Update() 
         {
             _time += Time.deltaTime;
+       //     Debug.Log(_time);
 
         }
 
@@ -58,6 +60,7 @@ namespace PlayerController
 
         private void FixedUpdate()
         {
+            IsGrounded();
             Gravity();
             ApplyMovement();
         }
@@ -67,28 +70,21 @@ namespace PlayerController
 
         private float _frameLeftGrounded = float.MinValue;
 
-        bool IsGrounded()
+        void IsGrounded()
         {
-            Vector2 position = transform.position;
-            Vector2 direction = Vector2.down;
-            float distance = 1f;
-
-            RaycastHit2D hit = Physics2D.Raycast(position, direction, distance, groundLayer);
-            if (hit.collider != null)
+            if (_rb.IsTouching(groundFilter))
             {
-                Debug.Log("OnGround" + transform.position.x);
-
                 _bufferedJumpIsUsable = true;
                 _coyoteUsable = true;
                 _endedJumpEarly = false;
-
-                return true;
+                isGrounded = true;
 
             }
-            else
-            {
+            else if(isGrounded == true) {
+                Debug.Log(_frameLeftGrounded);
+                Debug.Log(isGrounded);
                 _frameLeftGrounded = _time;
-                return false;
+                isGrounded = false;
             }
         }
 
@@ -103,15 +99,27 @@ namespace PlayerController
         private float _whenWasJumpPressed;
 
         private bool HasBufferedJump => _bufferedJumpIsUsable && _time < _whenWasJumpPressed + _stats.JumpBufferTime;
-        private bool CanUseCoyote => _coyoteUsable && !IsGrounded() && _time < _frameLeftGrounded + _stats.CoyoteTime;
+        //  private bool CanUseCoyote => _coyoteUsable && !IsGrounded() && _time < _frameLeftGrounded + _stats.CoyoteTime;
+
+        private bool CanUseCoyote() 
+        {
+            if(_coyoteUsable && !isGrounded && _time < _frameLeftGrounded + _stats.CoyoteTime) 
+            {
+                return true;
+            }
+            else 
+            {
+                return false;
+            }
+        }
 
         private void Jump()
         {
 
-            Debug.Log(CanUseCoyote);
+            Debug.Log(CanUseCoyote());
             _whenWasJumpPressed = _time;
 
-            if (!_endedJumpEarly && !IsGrounded() && !pressedJump && _rb.velocity.y > 0)
+            if (!_endedJumpEarly && !isGrounded && !pressedJump && _rb.velocity.y > 0)
             {
                 _endedJumpEarly = true;
             }
@@ -119,7 +127,7 @@ namespace PlayerController
             {
                 return;
             }
-            if (pressedJump && IsGrounded() || pressedJump && CanUseCoyote) 
+            if (pressedJump && isGrounded || pressedJump && CanUseCoyote()) 
             {
                 ExecuteJump();
             }
@@ -133,7 +141,8 @@ namespace PlayerController
             _whenWasJumpPressed = 0;
             _bufferedJumpIsUsable = false;
             _coyoteUsable = false;
-            _movementVelocity.y = _stats.JumpPower;
+            _rb.AddForce(Vector2.up * _stats.JumpPower, ForceMode2D.Impulse);
+     //       _movementVelocity.y = _stats.JumpPower;
             Jumped?.Invoke();
 
 
@@ -146,7 +155,7 @@ namespace PlayerController
 
         private void Gravity()
         {
-            if (IsGrounded() && _movementVelocity.y <= 0f)
+            if (isGrounded && _movementVelocity.y <= 0f)
             {
                 _movementVelocity.y = _stats.GroundForce;
             }
@@ -158,7 +167,10 @@ namespace PlayerController
                     inAirGravity *= _stats.EarlyJumpEndGravityModifier;
                     
                 }
-                _movementVelocity.y = Mathf.MoveTowards(_movementVelocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime);
+                if (!CanUseCoyote() || _movementVelocity.y >= 0)
+                {
+                    _movementVelocity.y = Mathf.MoveTowards(_movementVelocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime);
+                }
             }
         }
 

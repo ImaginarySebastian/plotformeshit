@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 78783176}
   - component: {fileID: 78783175}
   - component: {fileID: 78783174}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Square (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +310,7 @@ GameObject:
   - component: {fileID: 716889980}
   - component: {fileID: 716889979}
   - component: {fileID: 716889978}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Square (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -486,7 +486,7 @@ GameObject:
   - component: {fileID: 890966725}
   - component: {fileID: 890966724}
   - component: {fileID: 890966723}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -997,7 +997,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4891012519395797754, guid: 41c6cf970d7c5d741ad8d52986e563d3, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 7633804359184086558, guid: 41c6cf970d7c5d741ad8d52986e563d3, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7669619367960062558, guid: 41c6cf970d7c5d741ad8d52986e563d3, type: 3}
@@ -1033,7 +1034,7 @@ MonoBehaviour:
   Acceleration: 120
   JumpPower: 35
   JumpBufferTime: 0
-  CoyoteTime: 0
+  CoyoteTime: 1
   GroundForce: -1.5
   EarlyJumpEndGravityModifier: 3
   MaxFallSpeed: 40
@@ -1052,11 +1053,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 16
   _stats: {fileID: 1188858703}
+  _rb: {fileID: 1188858712}
+  groundFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
+  isGrounded: 0
 --- !u!4 &1188858710 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2866760233012975580, guid: 41c6cf970d7c5d741ad8d52986e563d3, type: 3}
+  m_PrefabInstance: {fileID: 1159442073}
+  m_PrefabAsset: {fileID: 0}
+--- !u!50 &1188858712 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 5149825971391290674, guid: 41c6cf970d7c5d741ad8d52986e563d3, type: 3}
   m_PrefabInstance: {fileID: 1159442073}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1246150339
@@ -1071,7 +1093,7 @@ GameObject:
   - component: {fileID: 1246150343}
   - component: {fileID: 1246150342}
   - component: {fileID: 1246150341}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Square (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1244,7 +1266,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1854813721}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
