@@ -13,22 +13,25 @@ namespace Movement
         [SerializeField] private CapsuleCollider2D collider;
         [SerializeField] private Rigidbody2D rigidbody;
         private Vector2 _movementVelocity;
-        public bool grounded;
+        private bool grounded;
         private float timeLeftGround;
         private float horizontal;
         private bool jumpEndedEarly;
         private bool pressedJump;
         private bool isAtPeakJump;
 
-        // Start is called before the first frame update
+        private bool isFacingRight = true;
+
         void Start()
         {
 
         }
 
-        // Update is called once per frame
         void Update()
         {
+
+            if((!isFacingRight &&  horizontal > 0f) || isFacingRight && horizontal < 0f) Flip();
+
 
         }
 
@@ -121,6 +124,14 @@ namespace Movement
             {
                 _movementVelocity.x = Mathf.MoveTowards(_movementVelocity.x, horizontal * _stats.Speed, _stats.Acceleration * Time.fixedDeltaTime);
             }
+        }
+
+        private void Flip()
+        {
+            isFacingRight = !isFacingRight;
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1f;
+            transform.localScale = localScale;
         }
 
         #endregion
