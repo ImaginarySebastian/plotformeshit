@@ -12,6 +12,8 @@ namespace Movement
         [SerializeField] Stats _stats;
         [SerializeField] private CapsuleCollider2D collider;
         [SerializeField] private Rigidbody2D rigidbody;
+
+
         private Vector2 _movementVelocity;
         private bool grounded;
         private float timeLeftGround;
@@ -19,8 +21,26 @@ namespace Movement
         private bool jumpEndedEarly;
         private bool pressedJump;
         private bool isAtPeakJump;
+        private bool hasReleasedJump = true;
+        private bool alwaysTrue = true;
+       
+
+        private bool doubleJumpOffCooldown = true;
+        private float doubleJumpsLeft;
+        private bool gliding;
+        public float yLevelOnDoubleJump;
 
         private bool isFacingRight = true;
+
+        private bool isGrabbing;
+        private bool canGrab;
+        private Vector2 direction;
+
+        private float colliderRadius = 0.1f;
+        public float grabBuffer = 0.3f;
+        private float whenWasGrabBuffered;
+        private bool hasResetVelocity;
+
 
         void Start()
         {
@@ -49,10 +69,30 @@ namespace Movement
             else if (context.canceled) 
             {
                 pressedJump = false;
+                gliding = false;
+                hasReleasedJump = true;
             }
             jumpToUse = true;
             timeAtJump = Time.time;
 
+        }
+
+        private void JumpAway()
+        {
+
+            // rigidbody.velocity += new Vector2(direction.x * 100, direction.y * 100);
+             if (direction != Vector2.zero)
+             {
+                rigidbody.AddForce(direction * 25, ForceMode2D.Impulse);
+                StartCoroutine(dashWait());
+             }
+             else if(direction == Vector2.zero){ isGrabbing = false; }
+        }
+
+        IEnumerator dashWait() 
+        {
+            yield return new WaitForSeconds(_stats.DashTime);
+            isGrabbing = false;
         }
 
         public void horizontalInput(InputAction.CallbackContext context)
@@ -66,11 +106,23 @@ namespace Movement
         private void FixedUpdate()
         {
             CollisionCheck();
-
-            CheckJump();
             HandleDirection();
-            Gravity();
-            Move();
+            CheckForGrab();
+
+            if (!isGrabbing)
+            {
+                hasResetVelocity = false;
+                CheckJump();
+                Gravity();
+                Move();
+            }
+            else if(!hasResetVelocity)
+            {
+                rigidbody.velocity = Vector2.zero;
+                hasResetVelocity = true;
+            }
+
+            
         }
 
 
@@ -82,10 +134,23 @@ namespace Movement
         private void CollisionCheck() 
         {
             Physics2D.queriesStartInColliders = false;
+            Vector2 rightOffset = new Vector2(0.4f, 0f);
+            Vector2 leftOffset = new Vector2(-0.4f, 0f);
+            
 
             // Ground and Ceiling
-            bool groundHit = Physics2D.CapsuleCast(collider.bounds.center, collider.size, collider.direction, 0, Vector2.down, _stats.DetectionDistance, ~_stats.PlayerLayer);
-            bool ceilingHit = Physics2D.CapsuleCast(collider.bounds.center, collider.size, collider.direction, 0, Vector2.up, _stats.DetectionDistance, ~_stats.PlayerLayer);
+            bool groundHit = Physics2D.CapsuleCast(collider.bounds.center, collider.size, collider.direction, 0, Vector2.down, _stats.DetectionDistanceY, ~_stats.PlayerLayer);
+            bool ceilingHit = Physics2D.CapsuleCast(collider.bounds.center, collider.size, collider.direction, 0, Vector2.up, _stats.DetectionDistanceY, ~_stats.PlayerLayer);
+            bool onRightWall = Physics2D.OverlapCircle((Vector2)transform.position + rightOffset, colliderRadius, ~_stats.PlayerLayer);
+            bool onLeftWall = Physics2D.OverlapCircle((Vector2)transform.position + leftOffset, colliderRadius, ~_stats.PlayerLayer);
+
+            if (onRightWall || onLeftWall) 
+            { 
+                canGrab = true;
+            }
+            else canGrab = false;
+
+
 
             // Hit a Ceiling
             if (ceilingHit) _movementVelocity.y = Mathf.Min(0, _movementVelocity.y);
@@ -93,19 +158,36 @@ namespace Movement
             // Landed on the Ground
             if (!grounded && groundHit)
             {
+                doubleJumpOffCooldown = true;
                 grounded = true;
                 coyoteAllowed = true;
                 canUseBufferedJump = true;
                 jumpEndedEarly = false;
+                gliding = false;
+                doubleJumpsLeft = _stats.MaxDoubleJumps;
             }
             // Left the Ground
             else if (grounded && !groundHit)
             {
                 timeLeftGround = Time.time;
-                Debug.Log(timeLeftGround);
                 grounded = false;
               //  _frameLeftGrounded = _time;
             }
+         /*   if (leftHit)
+            {
+                Debug.Log("Can Grab");
+                canGrab = true;
+                if (!touchingLeft) 
+                {
+                    Debug.Log("Isn't touching");
+                    rigidbody.AddForce(Vector2.right * 5, ForceMode2D.Impulse);
+                }
+
+            }
+            else if (rightHit)
+            {
+                canGrab = true;
+            }*/
 
         }
 
@@ -134,6 +216,8 @@ namespace Movement
             transform.localScale = localScale;
         }
 
+
+
         #endregion
 
         #region Jump
@@ -146,36 +230,104 @@ namespace Movement
 
         private bool HasBufferedJump => canUseBufferedJump && Time.time < timeAtJump + _stats.JumpBufferTime;
         private bool CanUseCoyote => coyoteAllowed && !grounded && Time.time < timeLeftGround + _stats.CoyoteTime;
+        private bool AllowNormalJump => (pressedJump && grounded || pressedJump && CanUseCoyote) && hasReleasedJump;
+        
 
         private void CheckJump() 
         {
-            
+            float modifier = 1f;
 
             if(!jumpEndedEarly && !grounded && !pressedJump && rigidbody.velocity.y > 0) 
             {
                 jumpEndedEarly = true;
             }
-            if (!jumpToUse) 
+            if (!jumpToUse) return;
+            if (AllowNormalJump) Jump(modifier);
+            if (!AllowNormalJump && !grounded)
             {
-                return;
-            }
+                if(pressedJump)
+                {
+                    if(doubleJumpOffCooldown && hasReleasedJump && doubleJumpsLeft > 0)
+                    {
+                        doubleJumpOffCooldown = false;
+                        doubleJumpsLeft--;
+                        yLevelOnDoubleJump = transform.position.y;
+                        Debug.Log("DoubleJump");
+                        modifier = 0.80f;
+                        Jump(modifier);
+                    }
+                    else if (!doubleJumpOffCooldown) 
+                    {
+                        if (yLevelOnDoubleJump + _stats.DoubleJumpThreshold >= transform.position.y && hasReleasedJump && doubleJumpsLeft > 0)
+                        {
+                            doubleJumpOffCooldown = false;
+                            doubleJumpsLeft--;
+                            modifier = 0.5f;
+                            yLevelOnDoubleJump = transform.position.y;
+                            Jump(modifier);
+                            return;
+                        }
+                        else if (rigidbody.velocity.y < 0) 
+                        {
+                            Debug.Log("test");
+                            gliding = true;
+                        }
+                    }
 
-            if (pressedJump && grounded || pressedJump && CanUseCoyote || HasBufferedJump && (grounded || CanUseCoyote))
-            {
-                Jump();
+                }
             }
         }
 
-        private void Jump() 
+        private void Jump(float modifier) 
         {
             jumpEndedEarly = false;
             timeAtJump = 0;
            // canUseBufferedJump = false;
             coyoteAllowed = false;
-            _movementVelocity.y = _stats.JumpPower;
+            _movementVelocity.y = _stats.JumpPower * modifier;
+            hasReleasedJump = false;
+        }
+
+        public void getJumpDirection(InputAction.CallbackContext context)
+        {
+            direction = context.ReadValue<Vector2>();
+        }
+
+        public void JumpGrabInput(InputAction.CallbackContext context)
+        {
+            if (context.performed && isGrabbing && hasReleasedJump)
+            {
+                JumpAway();
+            }
         }
 
         #endregion
+
+        private void CheckForGrab() 
+        {
+            
+            if ((whenWasGrabBuffered + grabBuffer) > Time.time && canGrab) 
+            {
+                Debug.Log("running");
+                isGrabbing = true;
+                whenWasGrabBuffered = 0;
+            }
+        }
+
+        public void Grab(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                if (canGrab)
+                {
+                    isGrabbing = !isGrabbing;
+                }
+                else 
+                {
+                    whenWasGrabBuffered = Time.time;
+                }
+            }
+        }
 
         #region Gravity
 
@@ -189,7 +341,8 @@ namespace Movement
 
             else
             {
-                var inAirGravity = _stats.AccelerationWhileFalling;
+                float inAirGravity = _stats.AccelerationWhileFalling;
+
                 if (!grounded && Mathf.Abs(rigidbody.velocity.y) < _stats.HangInAirThreshold)
                 {
                     inAirGravity = inAirGravity * _stats.HangInAirMultiplier;
@@ -198,14 +351,31 @@ namespace Movement
                 {
                     inAirGravity *= _stats.JumpEndEarlyModifier;
                 }
-                _movementVelocity.y = Mathf.MoveTowards(_movementVelocity.y, -_stats.TerminalVelocity, inAirGravity * Time.fixedDeltaTime);
+                if(!gliding)
+                {
+                    _movementVelocity.y = Mathf.MoveTowards(_movementVelocity.y, -_stats.TerminalVelocity, inAirGravity * Time.fixedDeltaTime);
+                    
+                }
+                else if(gliding)
+                {
+                     _movementVelocity.y = Mathf.MoveTowards(0, -_stats.GlideFallSpeed, _stats.AccelerationWhileFalling);
+                }
+                
             }
         }
 
         #endregion
         private void Move()
         {
-            rigidbody.velocity = new Vector2(_movementVelocity.x * _stats.Speed, _movementVelocity.y);
+
+            if (!gliding)
+            {
+                rigidbody.velocity = new Vector2(_movementVelocity.x * _stats.Speed, _movementVelocity.y);
+            }
+            else
+            {
+                rigidbody.velocity = new Vector2((_movementVelocity.x * _stats.Speed) * _stats.GlideMoveSpeedModifier, _movementVelocity.y);
+            }
         }
     }
 }
