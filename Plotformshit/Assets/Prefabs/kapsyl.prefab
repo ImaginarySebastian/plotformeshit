@@ -128,6 +128,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1289921117611795351}
+        m_TargetAssemblyTypeName: Movement.Movement, Assembly-CSharp
+        m_MethodName: getJumpDirection
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: aff9fb18-1c5c-4379-833f-37691d5d8825
     m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
   - m_PersistentCalls:
@@ -143,6 +155,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1289921117611795351}
         m_TargetAssemblyTypeName: Movement.Movement, Assembly-CSharp
         m_MethodName: JumpInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1289921117611795351}
+        m_TargetAssemblyTypeName: Movement.Movement, Assembly-CSharp
+        m_MethodName: JumpGrabInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -194,6 +218,26 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 72fae189-5387-44a1-8b73-c284be1c06e6
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1289921117611795351}
+        m_TargetAssemblyTypeName: Movement.Movement, Assembly-CSharp
+        m_MethodName: Grab
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9ad243e3-d9e8-426e-a82d-fbe3944a002b
+    m_ActionName: Player/Grab[/Keyboard/ctrl]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8d5c128c-78c2-466c-bd2e-a73a37d4c53f
+    m_ActionName: Player/Interact[/Keyboard/e]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
@@ -214,6 +258,8 @@ MonoBehaviour:
   _stats: {fileID: 7412327968164672726}
   collider: {fileID: 5099404532885321261}
   rigidbody: {fileID: 7576198919216467054}
+  yLevelOnDoubleJump: 0
+  grabBuffer: 0.3
 --- !u!114 &7412327968164672726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,23 +272,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 253d29851077a0d4abb533ece01338c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DetectionDistance: 0.05
+  DetectionDistanceY: 0.05
+  GrabbingDistance: 1
+  TouchingWallDistance: 0.05
   PlayerLayer:
     serializedVersion: 2
     m_Bits: 128
   Speed: 3.5
   JumpBufferTime: 0
   CoyoteTime: 0.2
-  JumpPower: 30
+  JumpPower: 35
   OnGroundDeceleration: 60
   InAirDeceleration: 30
   Acceleration: 120
-  AccelerationWhileFalling: 60
+  AccelerationWhileFalling: 120
   GroundGravity: -1.5
   JumpEndEarlyModifier: 3
   TerminalVelocity: 40
   HangInAirMultiplier: 0.2
   HangInAirThreshold: 0.5
+  MaxDoubleJumps: 3
+  DoubleJumpThreshold: 3.5
+  GlideFallSpeed: 10
+  GlideMoveSpeedModifier: 0.75
+  DashTime: 0.25
 --- !u!50 &7576198919216467054
 Rigidbody2D:
   serializedVersion: 4
