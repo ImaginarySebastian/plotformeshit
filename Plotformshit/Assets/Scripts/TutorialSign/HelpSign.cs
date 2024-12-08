@@ -22,7 +22,7 @@ public class HelpSign : MonoBehaviour
     {
         if (inRange)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Z))
             {
                 GameOverImage.gameObject.SetActive(true);
                 move._playerCanMove = false;
