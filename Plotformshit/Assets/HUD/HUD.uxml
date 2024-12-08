@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Container" style="flex-grow: 1;">
+        <ui:VisualElement name="TopContainer" style="flex-grow: 1; flex-direction: row;">
+            <ui:VisualElement name="TopLeft" style="flex-grow: 1; align-items: flex-start;">
+                <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Coins" style="background-color: rgb(176, 0, 147); width: 90px; scale: 2 2; translate: 40px 8px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="TopRight" style="flex-grow: 1; align-items: flex-end;">
+                <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Level" style="background-color: rgb(176, 0, 147); color: rgb(0, 0, 0); width: 90px; scale: 2 2; translate: -40px 8px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="BottomContainer" style="flex-grow: 1; flex-direction: row;">
+            <ui:VisualElement name="BottomLeft" style="flex-grow: 1; align-items: flex-start; justify-content: flex-end;" />
+            <ui:VisualElement name="BottomRight" style="flex-grow: 1; align-items: flex-end; justify-content: flex-end;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

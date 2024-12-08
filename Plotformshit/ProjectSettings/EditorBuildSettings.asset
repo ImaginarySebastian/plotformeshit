@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Elida.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Sebastian Scene/Level 2.unity
+    guid: 8085f420c902fe047bd2d89dfe1bcaed
+  - enabled: 1
+    path: Assets/Scenes/Sebastian Scene/Level 3.unity
+    guid: ace6edd162ab6184790b7e509146498d
   m_configObjects: {}
