@@ -648,6 +648,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameOverImage: {fileID: 1172889779}
+  document: {fileID: 1971062505}
 --- !u!4 &1020507039 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5092063383988494350, guid: bb2f43ff2212ef344aa5b4603cd36bf1, type: 3}
@@ -5291,6 +5292,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6814677970233870489, guid: 2451db90120c9d4488f8eca71006ceda, type: 3}
   m_PrefabInstance: {fileID: 3329502404894299303}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1971062505 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7414477854592803990, guid: 2451db90120c9d4488f8eca71006ceda, type: 3}
+  m_PrefabInstance: {fileID: 3329502404894299303}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971062503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3329502404894299303
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5459,6 +5471,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5234008467709044014, guid: e8c04327619545c4f8f8eb0bcf7e7048, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9034423199427907814, guid: e8c04327619545c4f8f8eb0bcf7e7048, type: 3}
+      propertyPath: m_FlipY
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
