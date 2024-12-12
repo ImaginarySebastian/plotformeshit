@@ -5,10 +5,12 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Movement
+namespace PlayerMovement
 {
     public class Movement : MonoBehaviour
     {
+        public bool _playerCanMove = true;
+
         [SerializeField] Stats _stats;
         [SerializeField] private CapsuleCollider2D collider;
         [SerializeField] private Rigidbody2D rigidbody;
@@ -28,7 +30,7 @@ namespace Movement
         private bool doubleJumpOffCooldown = true;
         private float doubleJumpsLeft;
         private bool gliding;
-        public float yLevelOnDoubleJump;
+        private float yLevelOnDoubleJump;
 
         private bool isFacingRight = true;
 
@@ -37,14 +39,14 @@ namespace Movement
         private Vector2 direction;
 
         private float colliderRadius = 0.1f;
-        public float grabBuffer = 0.3f;
+        
         private float whenWasGrabBuffered;
         private bool hasResetVelocity;
 
 
         void Start()
         {
-
+            _playerCanMove = true;
         }
 
         void Update()
@@ -139,10 +141,10 @@ namespace Movement
             
 
             // Ground and Ceiling
-            bool groundHit = Physics2D.CapsuleCast(collider.bounds.center, collider.size, collider.direction, 0, Vector2.down, _stats.DetectionDistanceY, ~_stats.PlayerLayer);
-            bool ceilingHit = Physics2D.CapsuleCast(collider.bounds.center, collider.size, collider.direction, 0, Vector2.up, _stats.DetectionDistanceY, ~_stats.PlayerLayer);
-            bool onRightWall = Physics2D.OverlapCircle((Vector2)transform.position + rightOffset, colliderRadius, ~_stats.PlayerLayer);
-            bool onLeftWall = Physics2D.OverlapCircle((Vector2)transform.position + leftOffset, colliderRadius, ~_stats.PlayerLayer);
+            bool groundHit = Physics2D.CapsuleCast(collider.bounds.center, collider.size, collider.direction, 0, Vector2.down, _stats.DetectionDistanceY, _stats.GroundLayer);
+            bool ceilingHit = Physics2D.CapsuleCast(collider.bounds.center, collider.size, collider.direction, 0, Vector2.up, _stats.DetectionDistanceY, _stats.GroundLayer);
+            bool onRightWall = Physics2D.OverlapCircle((Vector2)transform.position + rightOffset, colliderRadius, _stats.GroundLayer);
+            bool onLeftWall = Physics2D.OverlapCircle((Vector2)transform.position + leftOffset, colliderRadius, _stats.GroundLayer);
 
             if (onRightWall || onLeftWall) 
             { 
@@ -166,28 +168,11 @@ namespace Movement
                 gliding = false;
                 doubleJumpsLeft = _stats.MaxDoubleJumps;
             }
-            // Left the Ground
             else if (grounded && !groundHit)
             {
                 timeLeftGround = Time.time;
                 grounded = false;
-              //  _frameLeftGrounded = _time;
             }
-         /*   if (leftHit)
-            {
-                Debug.Log("Can Grab");
-                canGrab = true;
-                if (!touchingLeft) 
-                {
-                    Debug.Log("Isn't touching");
-                    rigidbody.AddForce(Vector2.right * 5, ForceMode2D.Impulse);
-                }
-
-            }
-            else if (rightHit)
-            {
-                canGrab = true;
-            }*/
 
         }
 
@@ -252,7 +237,6 @@ namespace Movement
                         doubleJumpOffCooldown = false;
                         doubleJumpsLeft--;
                         yLevelOnDoubleJump = transform.position.y;
-                        Debug.Log("DoubleJump");
                         modifier = 0.80f;
                         Jump(modifier);
                     }
@@ -269,7 +253,6 @@ namespace Movement
                         }
                         else if (rigidbody.velocity.y < 0) 
                         {
-                            Debug.Log("test");
                             gliding = true;
                         }
                     }
@@ -306,9 +289,8 @@ namespace Movement
         private void CheckForGrab() 
         {
             
-            if ((whenWasGrabBuffered + grabBuffer) > Time.time && canGrab) 
+            if ((whenWasGrabBuffered + _stats.grabBuffer) > Time.time && canGrab) 
             {
-                Debug.Log("running");
                 isGrabbing = true;
                 whenWasGrabBuffered = 0;
             }
@@ -367,14 +349,17 @@ namespace Movement
         #endregion
         private void Move()
         {
+            if (_playerCanMove)
+            {
 
-            if (!gliding)
-            {
-                rigidbody.velocity = new Vector2(_movementVelocity.x * _stats.Speed, _movementVelocity.y);
-            }
-            else
-            {
-                rigidbody.velocity = new Vector2((_movementVelocity.x * _stats.Speed) * _stats.GlideMoveSpeedModifier, _movementVelocity.y);
+                if (!gliding)
+                {
+                    rigidbody.velocity = new Vector2(_movementVelocity.x * _stats.Speed, _movementVelocity.y);
+                }
+                else
+                {
+                    rigidbody.velocity = new Vector2((_movementVelocity.x * _stats.Speed) * _stats.GlideMoveSpeedModifier, _movementVelocity.y);
+                }
             }
         }
     }
