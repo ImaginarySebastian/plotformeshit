@@ -64,11 +64,11 @@ namespace PlayerMovement
         public void JumpInput(InputAction.CallbackContext context) 
         {
             
-            if (context.performed)
+            if (context.performed && _playerCanMove)
             {
                 pressedJump = true;
             }
-            else if (context.canceled) 
+            else if (context.canceled || _playerCanMove) 
             {
                 pressedJump = false;
                 gliding = false;
@@ -99,7 +99,14 @@ namespace PlayerMovement
 
         public void horizontalInput(InputAction.CallbackContext context)
         {
-            horizontal = context.ReadValue<Vector2>().x;
+            if (_playerCanMove)
+            {
+                horizontal = context.ReadValue<Vector2>().x;
+            }
+            else
+            {
+                horizontal = 0f;
+            }
         }
 
         #endregion
@@ -349,8 +356,6 @@ namespace PlayerMovement
         #endregion
         private void Move()
         {
-            if (_playerCanMove)
-            {
 
                 if (!gliding)
                 {
@@ -360,7 +365,7 @@ namespace PlayerMovement
                 {
                     rigidbody.velocity = new Vector2((_movementVelocity.x * _stats.Speed) * _stats.GlideMoveSpeedModifier, _movementVelocity.y);
                 }
-            }
+            
         }
     }
 }

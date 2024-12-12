@@ -1,5 +1,5 @@
 #Container {
-    display: flex;
+    display: none;
     overflow: visible;
     visibility: hidden;
 }
