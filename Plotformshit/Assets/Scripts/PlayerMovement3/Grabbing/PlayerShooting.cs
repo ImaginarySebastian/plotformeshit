@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooting : MonoBehaviour
 {
+
     [SerializeField] float PlayerKnifeSpeed = 10f;
     [SerializeField] GameObject PlayerKnife;
     void Start()
