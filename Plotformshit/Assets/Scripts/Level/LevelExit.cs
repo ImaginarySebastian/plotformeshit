@@ -7,6 +7,8 @@ public class LevelExit : MonoBehaviour
 {
 
     float  timeUntilLoad = 0f;
+    [Tooltip("1 for next, -1 for previous")]
+    [SerializeField] int nextOrPrevious;
 
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -17,9 +19,9 @@ public class LevelExit : MonoBehaviour
     }
     void NextLevel()
     {
-      //  FindFirstObjectByType<ScenePersist>().ResetScenePersist();
+        FindFirstObjectByType<ScenePersist>().ResetScenePersist();
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(currentSceneIndex + 1);
+        SceneManager.LoadScene(currentSceneIndex + nextOrPrevious);
     }
 }
 

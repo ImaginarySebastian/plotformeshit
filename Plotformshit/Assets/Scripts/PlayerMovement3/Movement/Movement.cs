@@ -32,7 +32,7 @@ namespace PlayerMovement
         private bool gliding;
         private float yLevelOnDoubleJump;
 
-        private bool isFacingRight = true;
+        public bool isFacingRight = true;
 
         private bool isGrabbing;
         private bool canGrab;

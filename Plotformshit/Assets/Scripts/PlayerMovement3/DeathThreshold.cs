@@ -14,7 +14,7 @@ public class DeathThreshold : MonoBehaviour
 
     void Update()
     {
-        if(transform.position.z <= _deathThreshold)
+        if(transform.position.y <= _deathThreshold)
         {
             int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
             SceneManager.LoadScene(currentSceneIndex);

@@ -16,6 +16,9 @@ GameObject:
   - component: {fileID: 7576198919216467054}
   - component: {fileID: 5099404532885321261}
   - component: {fileID: 6969573905145921036}
+  - component: {fileID: 6115000283496722547}
+  - component: {fileID: 2316676295270261493}
+  - component: {fileID: 7581516683415772874}
   m_Layer: 7
   m_Name: kapsyl
   m_TagString: Player
@@ -149,7 +152,19 @@ MonoBehaviour:
     m_ActionId: a4315938-eed8-4a79-b8c9-034f929b155b
     m_ActionName: Player/Look[/Mouse/delta,/Pen/delta]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2316676295270261493}
+        m_TargetAssemblyTypeName: PlayerShooting, Assembly-CSharp
+        m_MethodName: OnFire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 483fe09e-ca3f-4848-a317-9195b1a88ea0
     m_ActionName: Player/Fire[/Mouse/leftButton]
   - m_PersistentCalls:
@@ -372,7 +387,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d60cba5479397b46a17f33016bbb4df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coins: 0
+  coinValue: 0
+--- !u!114 &6115000283496722547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043070522993229577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 595771236819bb844bb41d2bbcca7303, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InvincibilityTime: 1
+  Invincible: 0
+--- !u!114 &2316676295270261493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043070522993229577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf49bb3d28de3646a79555ec22745e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerKnifeSpeed: 10
+  PlayerKnife: {fileID: 6593604339901637776, guid: 572325c63af454e46851e35efa4608d3, type: 3}
+--- !u!114 &7581516683415772874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043070522993229577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5258f9a17bf5afa4db409465456a3a90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _deathThreshold: -60
 --- !u!1001 &6244186156367701487
 PrefabInstance:
   m_ObjectHideFlags: 0

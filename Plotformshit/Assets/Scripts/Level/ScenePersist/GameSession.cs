@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameSession : MonoBehaviour
 {
+    
+    [SerializeField] int PlayerHealth = 3;
     public int coins;
     void Awake()
     {
@@ -16,6 +19,21 @@ public class GameSession : MonoBehaviour
         {
             DontDestroyOnLoad(gameObject);
         }
+    }
+
+    public void DamagePlayer()
+    {
+        if (PlayerHealth > 0)
+            {
+                PlayerHealth--;
+            }
+
+            else
+            {
+                int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+                SceneManager.LoadScene(currentSceneIndex);
+            }
+
     }
 
 

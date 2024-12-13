@@ -7,14 +7,16 @@ TagManager:
   - Ground
   - Coin
   - GameSession
+  - EnemiWall
+  - Enemy
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Knife
   - Water
   - UI
-  - 
+  - coin
   - Player
   - Ground
   - 
